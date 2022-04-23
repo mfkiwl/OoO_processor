@@ -15,7 +15,7 @@
 
 /////////////////////////////////////////////////////////////////////////
 //                                                                     //
-//  Modulename  :  mult_comb                                           //
+//  Modulename  :  mult_stage                                          //
 //                                                                     //
 //  Description :  Multiplier Combinational Logic                      //
 //                                                                     //
@@ -305,7 +305,7 @@ module alu #(
     logic                       ex_end          ;
     logic                       squash          ;
 
-    logic   [`XLEN-1:0]         opa_mux_out, opb_mux_out;
+	logic   [`XLEN-1:0]         opa_mux_out, opb_mux_out;
 
     //
     // Latch valid instruction
@@ -417,8 +417,6 @@ module alu #(
 endmodule // alu
 
 
-
-
 /////////////////////////////////////////////////////////////////////////
 //                                                                     //
 //  Modulename  :  branch_condition                                    //
@@ -484,7 +482,7 @@ module branch #(
     logic   [`XLEN-1:0]     br_target       ;
     logic                   brcond_result   ;
 
-    logic   [`XLEN-1:0]     opa_mux_out, opb_mux_out;
+	logic   [`XLEN-1:0]     opa_mux_out, opb_mux_out;
 
     //
     // Latch valid instruction
@@ -639,7 +637,7 @@ module load #(
     logic                       ex_end          ;
     logic                       squash          ;
 
-    logic   [`XLEN-1:0]         opa_mux_out, opb_mux_out;
+	logic   [`XLEN-1:0]         opa_mux_out, opb_mux_out;
 
     //
     // Latch valid instruction
@@ -771,7 +769,7 @@ module store #(
     logic                       ex_end          ;
     logic                       squash          ;
 
-    logic   [`XLEN-1:0]         opa_mux_out, opb_mux_out;
+	logic   [`XLEN-1:0]         opa_mux_out, opb_mux_out;
 
     //
     // Latch valid instruction
@@ -909,14 +907,15 @@ module FU #(
     parameter   C_THREAD_NUM        =   `THREAD_NUM             ,
     parameter   C_FU_NUM            =   C_ALU_NUM + C_MULT_NUM + C_BR_NUM + C_LOAD_NUM + C_STORE_NUM,
     parameter   C_LSQ_IN_NUM        =   C_LOAD_NUM + C_STORE_NUM  ,
-    parameter   C_LSQ_OUT_NUM       =   C_THREAD_NUM * C_LOAD_NUM
+    parameter   C_LSQ_OUT_NUM       =   C_THREAD_NUM * C_LOAD_NUM ,
+    parameter   C_BC_IN_NUM         =   C_ALU_NUM + C_MULT_NUM + C_BR_NUM + C_LSQ_OUT_NUM + C_STORE_NUM
 )(
     input   logic                               clk_i           ,   // Clock
     input   logic                               rst_i           ,   // Reset
     input   IB_FU   [C_FU_NUM-1:0]              ib_fu_i         ,
     output  FU_IB   [C_FU_NUM-1:0]              fu_ib_o         ,
-    output  FU_BC   [C_FU_NUM-1:0]              fu_bc_o         ,
-    input   BC_FU   [C_FU_NUM-1:0]              bc_fu_i         ,
+    output  FU_BC   [C_BC_IN_NUM-1:0]           fu_bc_o         ,
+    input   BC_FU   [C_BC_IN_NUM-1:0]           bc_fu_i         ,
     output  FU_LSQ  [C_LSQ_IN_NUM-1:0]          fu_lsq_o        ,
     input   FU_BC   [C_LSQ_OUT_NUM-1:0]         lsq_bc_i        ,
     output  BC_FU   [C_LSQ_OUT_NUM-1:0]         bc_lsq_o        ,
@@ -1011,11 +1010,11 @@ module FU #(
                 .br_mis_i       (br_mis_i                       ),
                 .exception_i    (exception_i                    )
             );
-
-            assign  fu_bc_o[C_LOAD_BASE+idx]    =   lsq_bc_i[idx]           ;
-            assign  bc_lsq_o[idx]               =   bc_fu_i[C_LOAD_BASE+idx];
         end
     endgenerate
+
+    assign  fu_bc_o[C_LOAD_BASE+:C_LSQ_OUT_NUM] = lsq_bc_i;
+    assign  bc_lsq_o    =   bc_fu_i[C_LOAD_BASE+:C_LSQ_OUT_NUM];
 
 endmodule // module fu_module
 `endif // __FU_MODULE_V__
