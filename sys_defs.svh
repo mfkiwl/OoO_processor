@@ -74,6 +74,9 @@ typedef union packed {
 `define LSQ_OUT_NUM     (`THREAD_NUM) * (`LOAD_NUM)
 `define BC_IN_NUM       (`ALU_NUM + `MULT_NUM + `BR_NUM + `LSQ_OUT_NUM + `STORE_NUM)
 
+`define ALU_Q_SIZE      8
+`define MULT_Q_SIZE     8
+
 `define ALU_CYCLE       1
 `define MULT_CYCLE      1
 `define BR_CYCLE        1
