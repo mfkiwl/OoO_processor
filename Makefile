@@ -79,6 +79,7 @@ DCACHE_FILES += verilog/mshr_dispatch_selector.sv verilog/mshr_hit_detector.sv v
 DCACHE_FILES += verilog/mshr_memory_switch.sv verilog/mshr_proc_switch.sv verilog/mshr_rr_arbiter.sv
 export DCACHE_FILES
 DCACHE = $(SYNTH_DIR)/$(DCACHE_NAME).ddc
+# export DCACHE_CLOCK_PERIOD = 10.4
 export DCACHE_CLOCK_PERIOD = 10.4
 
 # Instruction Cache
@@ -166,7 +167,7 @@ export FU_NAME
 FU_FILES = verilog/FU.sv
 export FU_FILES
 FU = $(SYNTH_DIR)/$(FU_NAME).ddc
-export FU_CLOCK_PERIOD = 12.5
+export FU_CLOCK_PERIOD = 5
 
 # Physical Register File
 PRF_NAME = PRF
@@ -217,7 +218,7 @@ PIPE_DDC += $(RS) $(IB) $(FU) $(PRF) $(LSQ) $(BC) $(MEMSW) $(DCSW)
 # Passed through to .tcl scripts:
 export CLOCK_NET_NAME = clk_i
 export RESET_NET_NAME = rst_i
-export CLOCK_PERIOD   = 15   	# TODO: You will need to make match SYNTH_CLOCK_PERIOD in sys_defs
+export CLOCK_PERIOD   = 18.5   	# TODO: You will need to make match SYNTH_CLOCK_PERIOD in sys_defs
                                 #       and make this more aggressive
 
 ################################################################################
